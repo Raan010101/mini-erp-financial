@@ -44,7 +44,9 @@
             <p class="mb-2">Outstanding: <strong>RM {{ number_format($outstandingReceivables, 2) }}</strong></p>
             <p>Unpaid Invoices: <strong>{{ $unpaidInvoiceCount }}</strong></p>
         </div>
-
+        <a href="/transactions/create" class="bg-blue-600 text-white px-4 py-2 rounded inline-block mb-6">
+            Add Journal Entry
+        </a>
         <!-- Chart -->
         <div class="bg-white shadow rounded-xl p-6">
             <h2 class="text-xl font-semibold mb-4">Financial Overview</h2>
