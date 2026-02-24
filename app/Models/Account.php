@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Account extends Model
+{
+    //
+    protected $fillable = [
+    'company_id',
+    'account_name',
+    'account_type',
+    'balance'
+];
+
+public function company()
+{
+    return $this->belongsTo(Company::class);
+}
+
+public function transactions()
+{
+    return $this->hasMany(Transaction::class);
+}
+
+}
