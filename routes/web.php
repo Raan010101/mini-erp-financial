@@ -1,32 +1,27 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Models\Company;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Protected Routes
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/', [DashboardController::class, 'index']);
+Route::middleware(['auth'])->group(function () {
 
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::get('/api/financial-summary', function () {
-    $company = Company::first();
+    Route::get('/transactions/create', [TransactionController::class, 'create']);
+    Route::post('/transactions', [TransactionController::class, 'store']);
 
-    if (!$company) {
-        return response()->json(['error' => 'No company found'], 404);
-    }
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    $accounts = $company->accounts;
-    $invoices = $company->invoices;
-
-    return response()->json([
-        'company' => $company->name,
-        'total_assets' => $accounts->where('account_type', 'asset')->sum('balance'),
-        'total_revenue' => $accounts->where('account_type', 'revenue')->sum('balance'),
-        'total_expense' => $accounts->where('account_type', 'expense')->sum('balance'),
-        'outstanding_receivables' => $invoices->where('status', 'unpaid')->sum('amount'),
-    ]);
 });
 
-Route::get('/transactions/create', [TransactionController::class, 'create']);
-Route::post('/transactions', [TransactionController::class, 'store']);
+require __DIR__.'/auth.php';
