@@ -9,10 +9,30 @@ class DashboardController extends Controller
 {
 public function index()
 {
-    $company = \App\Models\Company::first();
+    $company = Company::first();
 
     if (!$company) {
-        return "No company data found.";
+        $company = Company::create([
+            'name' => 'Mini ERP Demo Sdn Bhd',
+            'country' => 'Malaysia',
+            'currency' => 'MYR'
+        ]);
+
+        // Create default Cash account
+        $cashAccount = \App\Models\Account::create([
+            'company_id' => $company->id,
+            'account_name' => 'Cash',
+            'account_type' => 'asset',
+            'balance' => 0
+        ]);
+
+        // Create sample invoice
+        \App\Models\Invoice::create([
+            'company_id' => $company->id,
+            'customer_name' => 'ABC Trading',
+            'amount' => 5000,
+            'due_date' => now()->addDays(30)
+        ]);
     }
 
     $accounts = $company->accounts;
@@ -37,4 +57,5 @@ public function index()
         'unpaidInvoiceCount'
     ));
 }
+
 }
