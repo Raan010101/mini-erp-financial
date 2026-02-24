@@ -2,40 +2,82 @@
 <html>
 <head>
     <title>Mini ERP Dashboard</title>
-    <style>
-        body { font-family: Arial; padding: 40px; }
-        .card { padding: 20px; margin: 15px 0; border: 1px solid #ddd; border-radius: 8px; }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
+<body class="bg-gray-100 p-8">
 
-    <h1>{{ $company->name }} - Financial Dashboard</h1>
+    <div class="max-w-6xl mx-auto">
 
-    <div class="card">
-        <h3>Total Assets</h3>
-        <p>RM {{ number_format($totalAssets, 2) }}</p>
+        <h1 class="text-3xl font-bold mb-6">
+            {{ $company->name }} - Financial Dashboard
+        </h1>
+
+        <!-- Metric Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+            <div class="bg-white shadow rounded-xl p-6">
+                <h3 class="text-gray-500">Total Assets</h3>
+                <p class="text-2xl font-semibold">RM {{ number_format($totalAssets, 2) }}</p>
+            </div>
+
+            <div class="bg-white shadow rounded-xl p-6">
+                <h3 class="text-gray-500">Revenue</h3>
+                <p class="text-2xl font-semibold">RM {{ number_format($totalRevenue, 2) }}</p>
+            </div>
+
+            <div class="bg-white shadow rounded-xl p-6">
+                <h3 class="text-gray-500">Expenses</h3>
+                <p class="text-2xl font-semibold">RM {{ number_format($totalExpense, 2) }}</p>
+            </div>
+
+            <div class="bg-white shadow rounded-xl p-6">
+                <h3 class="text-gray-500">Net Position</h3>
+                <p class="text-2xl font-semibold">RM {{ number_format($netPosition, 2) }}</p>
+            </div>
+
+        </div>
+
+        <!-- Receivables Section -->
+        <div class="bg-white shadow rounded-xl p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Accounts Receivable</h2>
+            <p class="mb-2">Outstanding: <strong>RM {{ number_format($outstandingReceivables, 2) }}</strong></p>
+            <p>Unpaid Invoices: <strong>{{ $unpaidInvoiceCount }}</strong></p>
+        </div>
+
+        <!-- Chart -->
+        <div class="bg-white shadow rounded-xl p-6">
+            <h2 class="text-xl font-semibold mb-4">Financial Overview</h2>
+            <canvas id="financialChart"></canvas>
+        </div>
+
     </div>
 
-    <div class="card">
-        <h3>Total Revenue</h3>
-        <p>RM {{ number_format($totalRevenue, 2) }}</p>
-    </div>
+    <script>
+        const ctx = document.getElementById('financialChart');
 
-    <div class="card">
-        <h3>Total Expenses</h3>
-        <p>RM {{ number_format($totalExpense, 2) }}</p>
-    </div>
-
-    <div class="card">
-        <h3>Net Position</h3>
-        <p>RM {{ number_format($netPosition, 2) }}</p>
-    </div>
-
-    <div class="card">
-    <h3>Outstanding Receivables</h3>
-    <p>RM {{ number_format($outstandingReceivables, 2) }}</p>
-    <p>Unpaid Invoices: {{ $unpaidInvoiceCount }}</p>
-</div>
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Assets', 'Revenue', 'Expenses', 'Receivables'],
+                datasets: [{
+                    label: 'RM',
+                    data: [
+                        {{ $totalAssets }},
+                        {{ $totalRevenue }},
+                        {{ $totalExpense }},
+                        {{ $outstandingReceivables }}
+                    ],
+                    backgroundColor: [
+                        '#3B82F6',
+                        '#10B981',
+                        '#EF4444',
+                        '#F59E0B'
+                    ]
+                }]
+            }
+        });
+    </script>
 
 </body>
 </html>
