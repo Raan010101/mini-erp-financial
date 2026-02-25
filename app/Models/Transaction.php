@@ -8,8 +8,8 @@ class Transaction extends Model
 {
     protected $fillable = [
         'company_id',
-        'account_id',
-        'type',
+        'debit_account_id',
+        'credit_account_id',
         'amount',
         'description',
         'transaction_date'
@@ -20,23 +20,13 @@ class Transaction extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function account()
+    public function debitAccount()
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(Account::class, 'debit_account_id');
     }
 
-    protected static function booted()
-{
-    static::created(function ($transaction) {
-        $account = $transaction->account;
-
-        if ($transaction->type === 'debit') {
-            $account->balance += $transaction->amount;
-        } else {
-            $account->balance -= $transaction->amount;
-        }
-
-        $account->save();
-    });
-}
+    public function creditAccount()
+    {
+        return $this->belongsTo(Account::class, 'credit_account_id');
+    }
 }

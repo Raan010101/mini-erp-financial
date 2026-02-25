@@ -37,17 +37,20 @@ public function index()
 
     $accounts = $company->accounts;
     $invoices = $company->invoices;
+$totalAssets = $accounts->where('account_type', 'asset')->sum('balance');
 
-    $totalAssets = $accounts->where('account_type', 'asset')->sum('balance');
-    $totalRevenue = $accounts->where('account_type', 'revenue')->sum('balance');
-    $totalExpense = $accounts->where('account_type', 'expense')->sum('balance');
+$totalRevenue = $accounts->where('account_type', 'revenue')->sum('balance');
 
-    $netPosition = $totalRevenue - $totalExpense;
+$totalExpense = $accounts->where('account_type', 'expense')->sum('balance');
+
+// Revenue is credit-normal
+// Expense is debit-normal
+$netPosition = $totalRevenue - $totalExpense;
 
     $outstandingReceivables = $invoices->where('status', 'unpaid')->sum('amount');
     $unpaidInvoiceCount = $invoices->where('status', 'unpaid')->count();
 
-    return view('dashboard', compact(
+    return view('financial-dashboard', compact(
         'company',
         'totalAssets',
         'totalRevenue',
